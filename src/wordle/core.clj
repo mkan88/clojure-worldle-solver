@@ -17,7 +17,7 @@
         (zipmap w (repeat (count w) (/ 1 (count w))))))))
 
 (defn compare-target-to-guess [target guess]
-
+  "Feedback for guess"
   (map #(let [current-letter (nth guess %)]
           (cond
             (= (nth target %) current-letter) [:g current-letter]
@@ -25,7 +25,8 @@
             :else [:b current-letter]))
        (range (count target))))
 
-(defn eligible-by-feedback? [word feedback]
+(defn eligible-by-letter? [word feedback]
+  "Returns eligibility for each letter in feedback"
   (map (fn [w p]
          (let [present (some (fn [x] (= (nth p 1) x)) word)]
            (case (first p)
@@ -36,7 +37,8 @@
        feedback))
 
 (defn eligible? [word feedback]
-  (every? true? (eligible-by-feedback? word feedback)))
+  "Returns eligibility of word"
+  (every? true? (eligible-by-letter? word feedback)))
 
 (def answer "water")
 (first possible-words)
