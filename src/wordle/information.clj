@@ -20,7 +20,7 @@
 (defn compare-target-to-guess [target guess]
   (map #(let [current-letter (nth guess %)]
           (cond
-            (= (nth target %) seeking [:g current-letter])
+            (= (nth target %) current-letter) [:g current-letter]
             (some (fn [x] (= current-letter x)) target) [:y current-letter]
             :else [:b current-letter]))
         (range (count target))))
