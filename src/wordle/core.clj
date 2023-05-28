@@ -4,11 +4,16 @@
      [clojure.string]))
 ;; (load-file "information.clj")
 
+(def word-length 5)
+
 (defn main [& args])
 
 
 (defn solve [guess-feedback-map]
   ())
+
+(defn assert-word-length [word]
+  (assert (= (count word) word-length)))
 
 (def possible-words
   (-> (slurp "data/possible_words.txt")
