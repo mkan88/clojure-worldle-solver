@@ -9,9 +9,6 @@
 (defn main [& args])
 
 
-(defn generate-guess [feedbacks]
-  ())
-
 (defn assert-word-length [word]
   (assert (= (count word) word-length)
           (str "Word must have length of " word-length)))
@@ -26,18 +23,20 @@
   (-> (slurp "data/allowed_words.txt")
       (clojure.string/split-lines)))
 
-(defn compare-target-to-guess [target guess]
+(defn compare-target-to-guess
   "Feedback for guess"
+  [target guess]
   (assert-word-length guess)
   (map #(let [current-letter (nth guess %)]
-          (cond 
+          (cond
             (= (nth target %) current-letter) [:g current-letter]
             (some (fn [x] (= current-letter x)) target) [:y current-letter]
             :else [:b current-letter]))
        (range (count target))))
 
-(defn eligible-by-letter? [word feedback]
+(defn eligible-by-letter?
   "Returns eligibility for each letter in feedback"
+  [word feedback]
   (map (fn [w p]
          (let [present (some (fn [x] (= (nth p 1) x)) word)]
            (case (first p)
@@ -51,14 +50,16 @@
   (every? true?
           (eligible-by-letter? word feedback)))
 
-(defn eligible? [word feedbacks]
+(defn eligible?
   "Returns eligibility of word"
+  [word feedbacks]
   (every? true?
-    (map (partial eligible-single-feedback? word) feedbacks)))
+          (map (partial eligible-single-feedback? word) feedbacks)))
 
 ; search for eligible words
-(defn eligible-words [words feedbacks]
+(defn eligible-words
   "Filter out ineligible words according to the feedback"
+  [words feedbacks]
   (filter #(eligible? % feedbacks) words))
 
 (defn choose-word-random [pw]
@@ -83,10 +84,18 @@
 (attempt-guess "aback" "witch")
 (attempt-guess "aback" "saber")
 
-(defn average-no-of-guesses [answers possible-words]
+(defn take-rand [coll n]
+  (take n (repeatedly #(rand-nth coll))))
 
-  )
+(defn average [coll]
+  (float (/ (reduce + coll) (count coll))))
 
+(defn average-no-of-guesses [answers n]
+  ; pmap about 5 times as fast as map
+  (-> (pmap attempt-guess (take-rand answers n) (repeat "saber"))
+      (average)))
+
+(time (average-no-of-guesses possible-words 1000))
 
 ; read file
 ; generate guess by calculating max information
