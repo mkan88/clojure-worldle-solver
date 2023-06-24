@@ -1,6 +1,5 @@
 (ns wordle.core
   (:require
-     [wordle.information :as info]
      [clojure.string]))
 
 (def word-length 5)
@@ -15,8 +14,6 @@
 (def possible-words
   (-> (slurp "data/possible_words.txt")
       (clojure.string/split-lines)))
-      ;; ((fn [w]
-      ;;   (zipmap w (repeat (count w) (/ 1 (count w))))))))
 
 (def allowed-words
   (-> (slurp "data/allowed_words.txt")
@@ -64,13 +61,6 @@
 (defn choose-word-random [pw]
   (rand-nth pw))
 
-(def answer "aback")
-(first possible-words)
-(def guess "green")
-(compare-target-to-guess answer "abase")
-
-(eligible-words possible-words [(compare-target-to-guess answer guess) (compare-target-to-guess answer "witch")])
-
 (defn attempt-guess [answer initial-guess]
   (loop [n 1 guess initial-guess feedbacks '()]
     (let [feedback (compare-target-to-guess answer guess)
@@ -78,9 +68,6 @@
       (if (every? #(= :g (first %)) feedback)
         n
         (recur (+ n 1) (choose-word-random (eligible-words possible-words feedbacks)) feedbacks)))))
-
-(compare-target-to-guess "aback" "black")
-(attempt-guess "aback" "aback")
 
 (defn take-rand [coll n]
   (take n (repeatedly #(rand-nth coll))))
