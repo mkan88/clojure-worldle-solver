@@ -43,21 +43,26 @@
        word
        feedback))
 
-(defn eligible? [word feedback]
+(defn eligible-single-feedback? [word feedback]
+  (every? true?
+          (eligible-by-letter? word feedback)))
+
+(defn eligible? [word feedbacks]
   "Returns eligibility of word"
-  (every? true? (eligible-by-letter? word feedback)))
+  (every? true?
+    (map (partial eligible-single-feedback? word) feedbacks)))
+
+; search for eligible words
+(defn eligible-words [words feedbacks]
+  "Filter out ineligible words according to the feedback"
+  (filter #(eligible? % feedbacks) words))
 
 (def answer "aback")
 (first possible-words)
-(def guess "abase")
+(def guess "green")
 (compare-target-to-guess answer "abase")
 
-; search for eligible words
-(defn eligible-words [words feedback]
-  "Filter out ineligible words according to the feedback"
-  (filter #(eligible? % feedback) words))
-
-(eligible-words possible-words (compare-target-to-guess answer guess))
+(eligible-words possible-words [(compare-target-to-guess answer guess) (compare-target-to-guess answer "witch")])
 ; read file
 ; generate guess by calculating max information
 ; guess
