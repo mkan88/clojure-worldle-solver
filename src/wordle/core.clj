@@ -9,22 +9,24 @@
 (defn main [& args])
 
 
-(defn solve [guess-feedback-map]
+(defn generate-guess [feedbacks]
   ())
 
 (defn assert-word-length [word]
-  (assert (= (count word) word-length)))
+  (assert (= (count word) word-length)
+          (str "Word must have length of " word-length)))
 
 (def possible-words
   (-> (slurp "data/possible_words.txt")
-      (clojure.string/split-lines)
-      ((fn [w]
-        (zipmap w (repeat (count w) (/ 1 (count w))))))))
+      (clojure.string/split-lines)))
+      ;; ((fn [w]
+      ;;   (zipmap w (repeat (count w) (/ 1 (count w))))))))
 
 (defn compare-target-to-guess [target guess]
   "Feedback for guess"
+  (assert-word-length guess)
   (map #(let [current-letter (nth guess %)]
-          (cond
+          (cond 
             (= (nth target %) current-letter) [:g current-letter]
             (some (fn [x] (= current-letter x)) target) [:y current-letter]
             :else [:b current-letter]))
@@ -45,15 +47,27 @@
   "Returns eligibility of word"
   (every? true? (eligible-by-letter? word feedback)))
 
-(def answer "water")
+(def answer "aback")
 (first possible-words)
-(info/entropy possible-words)
-(compare-target-to-guess answer "wretch")
+(def guess "abase")
+(compare-target-to-guess answer "abase")
 
+; search for eligible words
+(defn eligible-words [words feedback]
+  "Filter out ineligible words according to the feedback"
+  (filter #(eligible? % feedback) words))
 
+(eligible-words possible-words (compare-target-to-guess answer guess))
 ; read file
 ; generate guess by calculating max information
 ; guess
 ; get feedback (modularity for input)
 ; generate guess by calculating max information
 ; continue until solved
+
+
+;; max information:
+;; max probablility under entropy graph across all possible guesses
+;; sigmoid is for incorporating letter frequency
+;; least number of all greys?
+
