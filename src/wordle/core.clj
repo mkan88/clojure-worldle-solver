@@ -22,6 +22,10 @@
       ;; ((fn [w]
       ;;   (zipmap w (repeat (count w) (/ 1 (count w))))))))
 
+(def allowed-words
+  (-> (slurp "data/allowed_words.txt")
+      (clojure.string/split-lines)))
+
 (defn compare-target-to-guess [target guess]
   "Feedback for guess"
   (assert-word-length guess)
@@ -57,12 +61,33 @@
   "Filter out ineligible words according to the feedback"
   (filter #(eligible? % feedbacks) words))
 
+(defn choose-word-random [pw]
+  (rand-nth pw))
+
 (def answer "aback")
 (first possible-words)
 (def guess "green")
 (compare-target-to-guess answer "abase")
 
 (eligible-words possible-words [(compare-target-to-guess answer guess) (compare-target-to-guess answer "witch")])
+
+(defn attempt-guess [answer initial-guess]
+  (loop [n 1 guess initial-guess feedbacks '()]
+    (let [feedback (compare-target-to-guess answer guess)
+          feedbacks (conj feedbacks feedback)]
+      (if (every? #(= :g (first %)) feedback)
+        n
+        (recur (+ n 1) (choose-word-random (eligible-words possible-words feedbacks)) feedbacks)))))
+
+(attempt-guess "aback" "aback")
+(attempt-guess "aback" "witch")
+(attempt-guess "aback" "saber")
+
+(defn average-no-of-guesses [answers possible-words]
+
+  )
+
+
 ; read file
 ; generate guess by calculating max information
 ; guess
@@ -71,8 +96,4 @@
 ; continue until solved
 
 
-;; max information:
-;; max probablility under entropy graph across all possible guesses
-;; sigmoid is for incorporating letter frequency
-;; least number of all greys?
 
