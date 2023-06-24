@@ -1,16 +1,23 @@
 # wordle
 
-Solving Wordle with Information Theory in Clojure
+Solving Wordle in Clojure
 
-Inspired by 3Blue1Brown
 
 ## Usage
 
-FIXME
+To run with `lein`:
+```
+lein run -m wordle.core`
+```
+
+To run tests:
+```
+lein test
+```
 
 ## License
 
-Copyright © 2022 M Kan
+Copyright © 2022-2023 M Kan
 
 This program and the accompanying materials are made available under the
 terms of the Eclipse Public License 2.0 which is available at
