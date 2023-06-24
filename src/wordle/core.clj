@@ -2,11 +2,10 @@
   (:require
      [wordle.information :as info]
      [clojure.string]))
-;; (load-file "information.clj")
 
 (def word-length 5)
-
-(defn main [& args])
+(def initial-guess "salet")
+(def n-trials 1000)
 
 
 (defn assert-word-length [word]
@@ -80,9 +79,8 @@
         n
         (recur (+ n 1) (choose-word-random (eligible-words possible-words feedbacks)) feedbacks)))))
 
+(compare-target-to-guess "aback" "black")
 (attempt-guess "aback" "aback")
-(attempt-guess "aback" "witch")
-(attempt-guess "aback" "saber")
 
 (defn take-rand [coll n]
   (take n (repeatedly #(rand-nth coll))))
@@ -92,17 +90,10 @@
 
 (defn average-no-of-guesses [answers n]
   ; pmap about 5 times as fast as map
-  (-> (pmap attempt-guess (take-rand answers n) (repeat "saber"))
+  (-> (pmap attempt-guess (take-rand answers n) (repeat initial-guess))
       (average)))
 
-(time (average-no-of-guesses possible-words 1000))
-
-; read file
-; generate guess by calculating max information
-; guess
-; get feedback (modularity for input)
-; generate guess by calculating max information
-; continue until solved
-
-
+(defn -main [& args]
+  (let [n (average-no-of-guesses possible-words 1000)]
+    (println "Average no of guesses over" n-trials "runs:" n)))
 
